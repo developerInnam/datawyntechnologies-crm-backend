@@ -13,7 +13,7 @@ const app = express();
 // Middleware
 app.use(cors());
 const allowedOrigins = [
-  "http://localhost:5173", // React local development
+  // "http://localhost:5173",
   "https://datawyntechnologies-crm-sales.vercel.app", // Production frontend
 ];
 
