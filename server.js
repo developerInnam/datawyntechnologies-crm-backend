@@ -4,16 +4,13 @@ const dotenv = require("dotenv");
 const path = require("path");
 const db = require("./config/db");
 
-// Always load backend/.env explicitly so env vars are available regardless of CWD
-// If .env is missing or not readable, you can temporarily point to .env.debug.
-dotenv.config({ path: path.join(__dirname, ".env.debug") });
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 const app = express();
 
 // Middleware
 app.use(cors());
 const allowedOrigins = [
-  // "http://localhost:5173",
   "https://datawyntechnologies-crm-sales.vercel.app", // Production frontend
 ];
 
