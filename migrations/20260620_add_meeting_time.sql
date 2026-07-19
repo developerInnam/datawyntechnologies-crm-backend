@@ -1,7 +1,7 @@
 -- Adds meeting_time column to activities for meeting scheduling
 
 ALTER TABLE activities
-  ADD COLUMN IF NOT EXISTS meeting_time TIME NULL;
+  ADD COLUMN meeting_time TIME NULL;
 
 -- Also ensure activities.status supports canceled (route uses 'canceled')
 -- MySQL cannot add a value without redefining enum; use a guard by checking definition.
