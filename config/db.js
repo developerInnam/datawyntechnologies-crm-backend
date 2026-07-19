@@ -9,22 +9,24 @@ dotenv.config({ path: path.join(__dirname, '..', '.env') });
 // (Keep minimal: do not print passwords)
 console.log('[DB CONFIG] DB_HOST=', process.env.DB_HOST, 'DB_USER=', JSON.stringify(process.env.DB_USER), 'DB_NAME=', process.env.DB_NAME);
 
+const mysql = require("mysql2");
+
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || '127.0.0.1',
+  host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306,
+  port: Number(process.env.DB_PORT),
 
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  dateStrings: true,
+
   connectTimeout: 10000,
-  acquireTimeout: 10000,
-  timeout: 10000,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0
+
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 const promisePool = pool.promise();
