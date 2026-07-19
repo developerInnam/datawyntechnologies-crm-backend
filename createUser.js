@@ -25,8 +25,8 @@ async function createUser() {
       console.log('✅ Admin role exists with ID:', role_id);
     }
 
-    const email = 'admin@crm.com';
-    const password = 'admin@123';
+    const email = 'datawyn@crm.com';
+    const password = 'datawyn@123';
     const name = 'Admin User';
     const phone = '1234567890';
 
