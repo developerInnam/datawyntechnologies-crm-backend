@@ -11,6 +11,7 @@ Add these in your Vercel project dashboard under Settings > Environment Variable
 - `DB_USER` = root
 - `DB_PASSWORD` = ZBHSHGHuVXEmYCMzjgjFZIczSocHRIIa
 - `DB_NAME` = crm_system
+- `DB_PORT` = 57089
 
 ### JWT Configuration
 - `JWT_SECRET` = your_jwt_secret_key_here (IMPORTANT: Change this to a secure random string for production!)
