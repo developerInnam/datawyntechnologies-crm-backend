@@ -9,8 +9,6 @@ dotenv.config({ path: path.join(__dirname, ".env") });
 const app = express();
 
 // Middleware
-app.use(cors());
-const cors = require("cors");
 
 const allowedOrigins = [
   "http://localhost:5173",
@@ -61,38 +59,5 @@ app.get("/", (req, res) => {
   res.json({ message: "CRM System API" });
 });
 
-const PORT = process.env.PORT || 5000;
-
-// Auto-cancel overdue meetings job
-async function autoCancelOverdueMeetings() {
-  try {
-    await db.query(`
-      UPDATE activities 
-      SET status = 'canceled' 
-      WHERE status = 'pending' 
-      AND follow_up_date IS NOT NULL 
-      AND (
-        (meeting_time IS NOT NULL AND CONCAT(follow_up_date, ' ', meeting_time) < NOW())
-        OR
-        (meeting_time IS NULL AND DATE(follow_up_date) < CURDATE())
-      )
-    `);
-    console.log("Auto-cancel job: Overdue meetings canceled successfully");
-  } catch (error) {
-    console.error("Auto-cancel job error:", error);
-  }
-}
-
-// Run auto-cancel job every hour (3600000 ms)
-const AUTO_CANCEL_INTERVAL = 3600000; // 1 hour
-setInterval(autoCancelOverdueMeetings, AUTO_CANCEL_INTERVAL);
-
-// Run once on server startup
-autoCancelOverdueMeetings();
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(
-    `Auto-cancel job scheduled to run every ${AUTO_CANCEL_INTERVAL / 60000} minutes`,
-  );
-});
+// Export for Vercel serverless
+module.exports = app;
