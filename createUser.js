@@ -26,7 +26,7 @@ async function createUser() {
     }
 
     const email = 'admin@crm.com';
-    const password = 'admin123';
+    const password = 'admin@123';
     const name = 'Admin User';
     const phone = '1234567890';
 
