@@ -29,33 +29,33 @@ router.get('/stats', auth, async (req, res) => {
       // Admin: Get all statistics
       clientQuery = 'SELECT COUNT(*) as total, SUM(CASE WHEN is_converted = 1 THEN 1 ELSE 0 END) as converted FROM clients';
       clientParams = [];
-      
+
       activityQuery = 'SELECT COUNT(*) as total, SUM(CASE WHEN status = "pending" THEN 1 ELSE 0 END) as pending FROM activities';
       activityParams = [];
-      
+
       noteQuery = 'SELECT COUNT(*) as total FROM notes';
       noteParams = [];
-      
+
       userQuery = 'SELECT COUNT(*) as total FROM users';
       userParams = [];
-      
+
       activeUserQuery = 'SELECT COUNT(*) as total FROM users WHERE LOWER(status) IN ("active","live")';
       activeUserParams = [];
     } else {
       // Non-admin: Get statistics for own data only
       clientQuery = 'SELECT COUNT(*) as total, SUM(CASE WHEN is_converted = 1 THEN 1 ELSE 0 END) as converted FROM clients WHERE user_id = ?';
       clientParams = [userId];
-      
+
       activityQuery = 'SELECT COUNT(*) as total, SUM(CASE WHEN status = "pending" THEN 1 ELSE 0 END) as pending FROM activities WHERE user_id = ?';
       activityParams = [userId];
-      
+
       noteQuery = 'SELECT COUNT(*) as total FROM notes WHERE user_id = ?';
       noteParams = [userId];
-      
+
       // Users count is only for admins
       userQuery = 'SELECT 0 as total';
       userParams = [];
-      
+
       activeUserQuery = 'SELECT 0 as total';
       activeUserParams = [];
     }
@@ -227,7 +227,16 @@ router.get('/meetings', auth, async (req, res) => {
       previousCanceledMeetings: previousCanceledRows,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Meetings API Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+      code: error.code,
+      sqlMessage: error.sqlMessage,
+      sql: error.sql,
+      stack: process.env.NODE_ENV !== "production" ? error.stack : undefined,
+    });
   }
 });
 
@@ -255,7 +264,7 @@ router.get('/monthly-stats', auth, async (req, res) => {
         GROUP BY DATE_FORMAT(created_at, '%Y-%m')
       `;
       clientParams = [currentYear, month];
-      
+
       activityQuery = `
         SELECT 
           COUNT(*) as total,
@@ -266,7 +275,7 @@ router.get('/monthly-stats', auth, async (req, res) => {
         GROUP BY DATE_FORMAT(created_at, '%Y-%m')
       `;
       activityParams = [currentYear, month];
-      
+
       noteQuery = `
         SELECT 
           COUNT(*) as total,
@@ -288,7 +297,7 @@ router.get('/monthly-stats', auth, async (req, res) => {
         GROUP BY DATE_FORMAT(created_at, '%Y-%m')
       `;
       clientParams = [userId, currentYear, month];
-      
+
       activityQuery = `
         SELECT 
           COUNT(*) as total,
@@ -299,7 +308,7 @@ router.get('/monthly-stats', auth, async (req, res) => {
         GROUP BY DATE_FORMAT(created_at, '%Y-%m')
       `;
       activityParams = [userId, currentYear, month];
-      
+
       noteQuery = `
         SELECT 
           COUNT(*) as total,
@@ -316,8 +325,8 @@ router.get('/monthly-stats', auth, async (req, res) => {
     const [notes] = await db.query(noteQuery, noteParams);
 
     // Get month name
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                       'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'];
     const monthName = monthNames[parseInt(month) - 1];
 
     res.json([{
