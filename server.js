@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const db = require("./config/db");
 
-dotenv.config({ path: path.join(__dirname, ".env") });
+require("dotenv").config();
 
 const app = express();
 
@@ -32,6 +32,25 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get("/api/test-db", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT NOW() AS currentTime");
+
+    res.json({
+      success: true,
+      data: rows,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      error: err.message,
+      code: err.code,
+    });
+  }
+});
 
 // Routes
 app.use("/api/auth", require("./routes/auth"));
