@@ -10,14 +10,16 @@ const app = express();
 
 // Middleware
 app.use(cors());
+const cors = require("cors");
+
 const allowedOrigins = [
-  "https://datawyntechnologies-crm-sales.vercel.app", // Production frontend
+  "http://localhost:5173",
+  "https://datawyntechnologies-crm-sales.vercel.app",
 ];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (Postman, mobile apps, curl)
+    origin(origin, callback) {
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
@@ -26,10 +28,10 @@ app.use(
 
       return callback(new Error("Not allowed by CORS"));
     },
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
-  }),
+  })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
